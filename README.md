@@ -1,5 +1,18 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
+
+### Model Documentation (The code model for generating paths is described) 
+1, Lane Change
+  If the car is blocked in front and other cars are 5 seconds behind it. the car will start to change lane. The sensor data will give the information about the other car. 
+
+2, Acceleration and Jerk control
+  Jerk is the rate of change of acceleration. According to the requirement, the max acceleration is 10 m/s² and the max jerk is 10m/s³, respectively. In order to meet this requirement, the car acceleration can be fixed at of 5 m/s².
+  
+3, Path Trajectory Generation 
+  * There is a list of highway waypoints in the center of the highway. 
+  * If the lane change is requred, the target waypoint are shifted accordingly.
+  * The spline libarary is used to generate a smooth curve based on the current car way points and the target waypoints.
+  * The car waypoints (Path Trajectory) are advanced step by step using the pre-calculated accerlaration.
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
