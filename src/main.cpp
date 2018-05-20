@@ -248,13 +248,12 @@ int main() {
             // Provided previous path point size.
             int prev_path_size = previous_path_x.size();
 
-            // Preventing collitions.
+            // Preventing collision .
             if (prev_path_size > 0) {
               car_s = end_path_s;
             }
 
             /* Prediction : Analysing the likely behavior of other cars. */
-            double car_ahead_speed = 0;
             bool car_ahead = false;
             bool car_left = false;
             bool car_right = false;
@@ -275,28 +274,27 @@ int main() {
                 double vy = sensor_fusion[i][4];
                 double check_speed = sqrt(vx*vx + vy*vy);
                 double check_car_s = sensor_fusion[i][5];
-                check_car_s += ((double)5*check_speed);
+                check_car_s += ((double)prev_path_size*delta_time*check_speed);
 
                 if ( another_car_lane == car_lane ) {
-                  car_ahead = check_car_s > car_s && check_car_s - car_s < safeDistance;
-                  car_ahead_speed = check_speed;
+                  car_ahead |= check_car_s > car_s && check_car_s - car_s < safeDistance;
                 } else if ( another_car_lane - car_lane == -1 ) {
-                  car_left = car_s - safeDistance < check_car_s && car_s + safeDistance > check_car_s;
+                  car_left |= car_s - safeDistance < check_car_s && car_s + safeDistance > check_car_s;
                 } else if ( another_car_lane - car_lane == 1 ) {
-                  car_right = car_s - safeDistance < check_car_s && car_s + safeDistance > check_car_s;
+                  car_right |= car_s - safeDistance < check_car_s && car_s + safeDistance > check_car_s;
                 }
             }
 
             /* Behavior : Decide if turn right, turn left or not. */
             double speed_diff = 0;
             const double MAX_SPEED = 22; // 50 Miles Per Hour = 22.352 Metre Per Second
-            const double ACC = 5;
+            const double ACC = 5*delta_time;
             if ( car_ahead ) {
               if ( !car_left && car_lane > 0 ) {
                 car_lane--; // Change lane left.
               } else if ( !car_right && car_lane != 2 ){
                 car_lane++; // Change lane right.
-              } else if {
+              } else {
                 speed_diff -= ACC;
               }
             } else {
@@ -377,7 +375,7 @@ int main() {
 
             double x_add_on = 0;
 
-            for( int i = 1; i < 60 - prev_path_size; i++ ) {
+            for( int i = 1; i < 50 - prev_path_size; i++ ) {
               last_planned_vel += speed_diff;
               if ( last_planned_vel > MAX_SPEED ) {
                 last_planned_vel = MAX_SPEED;
